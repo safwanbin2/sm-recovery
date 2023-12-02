@@ -32,7 +32,7 @@ const studentSchema = new Schema<TStudent>(
     user: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: "UserModel",
+      ref: "User",
     },
     name: {
       type: nameSchema,
@@ -85,9 +85,9 @@ const studentSchema = new Schema<TStudent>(
       required: true,
     },
     admissionSemester: {
-      type: String,
+      type: Schema.Types.ObjectId,
       required: true,
-      ref: "AdmissionSemesterModel",
+      ref: "AcademicSemester",
     },
     isDeleted: {
       type: Boolean,

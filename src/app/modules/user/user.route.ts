@@ -11,4 +11,6 @@ router.post(
   UserController.createStudent
 );
 
+router.get("/:userId", UserController.getSingleUser);
+
 export const UserRouter = router;
