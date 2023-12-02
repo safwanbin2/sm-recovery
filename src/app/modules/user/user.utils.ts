@@ -13,13 +13,25 @@ const findLastStudent = async () => {
       createdAt: -1,
     })
     .lean();
-  return lastId?.id.substring(6) || undefined;
+  return lastId?.id || undefined;
 };
 
 export const generateStudentId = async (
   admissionSemester: TAcademicSemester
 ) => {
-  const currentId = (await findLastStudent()) || (0).toString();
+  let currentId = (0).toString();
+
+  const lastId = await findLastStudent();
+  console.log(lastId);
+  if (
+    lastId &&
+    lastId.substring(0, 4) === admissionSemester.year &&
+    lastId.substring(4, 6) === admissionSemester.code
+  ) {
+    console.log(lastId, "last");
+    currentId = lastId.substring(6);
+  }
+
   const increamentId = (Number(currentId) + 1).toString().padStart(4, "0");
 
   const generatedId = `${admissionSemester.year}${admissionSemester.code}${increamentId}`;
