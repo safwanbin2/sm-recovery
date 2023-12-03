@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 import { TGuardian, TName, TStudent } from "./student.interface";
 
-const nameSchema = new Schema<TName>({
+export const nameSchema = new Schema<TName>({
   firstName: {
     type: String,
     required: true,
@@ -12,7 +12,7 @@ const nameSchema = new Schema<TName>({
   },
 });
 
-const guardianSchema = new Schema<TGuardian>({
+export const guardianSchema = new Schema<TGuardian>({
   name: {
     type: nameSchema,
     required: true,
@@ -59,10 +59,14 @@ const studentSchema = new Schema<TStudent>(
     contactNo: {
       type: String,
       required: true,
+      min: 11,
+      max: 15,
     },
     emergencyContactNo: {
       type: String,
       required: true,
+      min: 11,
+      max: 15,
     },
     presentAddress: {
       type: String,

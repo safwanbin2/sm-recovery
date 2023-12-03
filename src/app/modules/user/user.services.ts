@@ -1,10 +1,13 @@
+import mongoose from "mongoose";
 import config from "../../config";
 import { AcademicSemesterModel } from "../academicSemester/academicSemester.model";
 import { TStudent } from "../student/student.interface";
 import { StudentModel } from "../student/student.model";
 import { TUser } from "./user.interface";
 import { UserModel } from "./user.model";
-import { generateStudentId } from "./user.utils";
+import { generateFacultyId, generateStudentId } from "./user.utils";
+import { TFaculty } from "../faculty/faculty.interface";
+import { FacultyModel } from "../faculty/faculty.model";
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   let user: Partial<TUser> = {};
@@ -18,14 +21,30 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   user.status = "in-progress";
   user.password = password || config.default_password;
 
-  const newUser = await UserModel.create(user);
-  if (Object.keys(newUser).length) {
-    payload.user = newUser._id;
-    payload.id = newUser.id;
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    const newUser = await UserModel.create([user], { session });
+    if (!newUser.length) {
+      throw new Error("Could not create user");
+    }
+    payload.user = newUser[0]._id;
+    payload.id = newUser[0].id;
     payload.role = "student";
 
-    const newStudent = await StudentModel.create(payload);
+    const newStudent = await StudentModel.create([payload], { session });
+
+    if (!newStudent.length) {
+      throw new Error("Could not create student");
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
     return newStudent;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
   }
 };
 
@@ -34,7 +53,45 @@ const getSingleStudentFromDB = async (userId: string) => {
   return result;
 };
 
+// faculty
+const createFacultyIntoDB = async (password: string, faculty: TFaculty) => {
+  let user: Partial<TUser> = {};
+
+  user.id = await generateFacultyId();
+  user.password = password || config.default_password;
+  user.role = "faculty";
+  user.status = "in-progress";
+
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    const newUser = await UserModel.create([user], { session });
+    if (!newUser.length) {
+      throw new Error("Could not create User");
+    }
+
+    faculty.user = newUser[0]._id;
+    faculty.id = newUser[0].id;
+    faculty.role = "faculty";
+
+    const newFaculty = await FacultyModel.create([faculty], { session });
+    if (!newFaculty.length) {
+      throw new Error("Could not create Faculty");
+    }
+
+    await session.commitTransaction();
+    await session.endSession();
+    return newFaculty;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error("Could not perform the action");
+  }
+};
+
 export const UserService = {
   createStudentIntoDB,
-  getSingleUserFromDB: getSingleStudentFromDB,
+  getSingleStudentFromDB,
+  createFacultyIntoDB,
 };
