@@ -7,6 +7,7 @@ import { AcademicSemesterRouter } from "./app/modules/academicSemester/academicS
 import { AcademicFacultyRouter } from "./app/modules/academicFaculty/academicFaculty.route";
 import { AcademicDepartmentRouter } from "./app/modules/academicDepartment/academicDepartment.route";
 import { StudentRouter } from "./app/modules/student/student.route";
+import { FacultyRouter } from "./app/modules/faculty/faculty.route";
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use("/api/v1/users", UserRouter);
 app.use("/api/v1/students", StudentRouter);
+app.use("/api/v1/faculties", FacultyRouter);
 app.use("/api/v1/academic-semesters", AcademicSemesterRouter);
 app.use("/api/v1/academic-faculties", AcademicFacultyRouter);
 app.use("/api/v1/academic-departments", AcademicDepartmentRouter);
