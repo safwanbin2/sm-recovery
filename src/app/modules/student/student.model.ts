@@ -84,6 +84,11 @@ const studentSchema = new Schema<TStudent>(
       type: String,
       required: true,
     },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "AcademicDepartment",
+    },
     admissionSemester: {
       type: Schema.Types.ObjectId,
       required: true,
