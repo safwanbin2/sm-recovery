@@ -4,6 +4,7 @@ import config from "../config";
 import { handleZodError } from "../error/handleZodError";
 import { TErrorSource } from "../interface/error";
 import { handleMongooseError } from "../error/handleMongooseError";
+import { handleCastError } from "./handleCastError";
 
 export const globalErrorHandler = (
   err: any,
@@ -28,6 +29,11 @@ export const globalErrorHandler = (
     errorSources = simplifiedError.errorSources;
   } else if (err.name.message === "ValidationError") {
     const simplifiedError = handleMongooseError(err);
+    statusCode = simplifiedError.statusCode;
+    message = simplifiedError.message;
+    errorSources = simplifiedError.errorSources;
+  } else if (err.name === "CastError") {
+    const simplifiedError = handleCastError(err);
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorSources = simplifiedError.errorSources;
