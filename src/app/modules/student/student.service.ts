@@ -13,8 +13,17 @@ const getAllStudentsFromDB = async () => {
   return result;
 };
 
-const getSingleStudentFromDB = async (studentId: string) => {
-  const result = await StudentModel.findById(studentId)
+const getSingleStudentFromDB = async (query: Record<string, any>) => {
+  let searchTerm = "";
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm;
+  }
+
+  const result = await StudentModel.find({
+    $or: ["name.firstName"].map((field) => ({
+      [field]: { $regex: searchTerm },
+    })),
+  })
     .populate("user")
     .populate("admissionSemester")
     .populate({
