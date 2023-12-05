@@ -2,13 +2,34 @@ import mongoose from "mongoose";
 import { FacultyModel } from "./faculty.model";
 import { UserModel } from "../user/user.model";
 
-const getAllFacultiesFromDB = async () => {
-  const result = await FacultyModel.find().populate({
-    path: "academicDepartment",
-    populate: {
-      path: "academicFaculty",
-    },
-  });
+const getAllFacultiesFromDB = async (query: Record<string, any>) => {
+  let page = 1;
+  let limit = 5;
+  let skip = 0;
+
+  if (query?.limit) {
+    limit = Number(query?.limit);
+  }
+  if (query?.page) {
+    page = Number(query?.page);
+    skip = (page - 1) * limit;
+  }
+
+  let fields = "";
+  if (query?.fields) {
+    fields = query?.fields.split(",").join(" ");
+  }
+
+  const result = await FacultyModel.find()
+    .populate({
+      path: "academicDepartment",
+      populate: {
+        path: "academicFaculty",
+      },
+    })
+    .skip(skip)
+    .limit(limit)
+    .select(fields);
   return result;
 };
 
