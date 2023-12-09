@@ -10,6 +10,7 @@ const preRequisiteCoursesSchema = new Schema<TPreRequisiteCourses>({
   isDeleted: {
     type: Boolean,
     required: true,
+    default: false,
   },
 });
 
@@ -31,7 +32,10 @@ const courseSchema = new Schema<TCourse>({
     type: String,
     required: true,
   },
-  preRequisiteCourses: [preRequisiteCoursesSchema],
+  preRequisiteCourses: {
+    type: [preRequisiteCoursesSchema],
+    required: false,
+  },
   isDeleted: {
     type: Boolean,
     required: true,
