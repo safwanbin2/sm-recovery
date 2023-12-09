@@ -36,8 +36,8 @@ class QueryBuilder {
   }
 
   paginate() {
-    let page = this.query.page || 1;
-    let limit = this.query.page || 2;
+    let page = Number(this.query.page) || 1;
+    let limit = Number(this.query.limit) || 2;
     let skip = (page - 1) * limit;
 
     this.modelQuery = this.modelQuery.find().skip(skip).limit(limit);

@@ -2,10 +2,9 @@ import QueryBuilder from "../../builders/QueryBuilders";
 import { StudentModel } from "./student.model";
 
 const getAllStudentsFromDB = async (query: Record<string, any>) => {
-  const studentQuery = new QueryBuilder(StudentModel.find(), query).search([
-    "name.firstName",
-    "email",
-  ]);
+  const studentQuery = new QueryBuilder(StudentModel.find(), query)
+    .search(["name.firstName", "email"])
+    .paginate();
   const result = studentQuery.modelQuery;
   // const result = await StudentModel.find();
   // .populate("user")
