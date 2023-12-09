@@ -7,7 +7,7 @@ const router = Router();
 
 // Routes
 router.post(
-  "/",
+  "/create-course",
   validateRequest(CourseValidation.createCourseValidationSchema),
   CourseController.createCourse
 );

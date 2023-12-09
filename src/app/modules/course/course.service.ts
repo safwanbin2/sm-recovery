@@ -1,3 +1,4 @@
+import QueryBuilder from "../../builders/QueryBuilders";
 import { TCourse } from "./course.interface";
 import { CourseModel } from "./course.model";
 
@@ -6,8 +7,14 @@ const createCourseIntoDB = async (payload: TCourse) => {
   return result;
 };
 
-const getAllCoursesFromDB = async () => {
-  const result = await CourseModel.find();
+const getAllCoursesFromDB = async (query: Record<string, any>) => {
+  const courseQuery = new QueryBuilder(CourseModel.find(), query)
+    .search(["title", "prefix"])
+    .paginate()
+    .sort();
+  const result = await courseQuery.modelQuery.populate(
+    "preRequisiteCourses.course"
+  );
   return result;
 };
 

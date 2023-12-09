@@ -33,6 +33,8 @@ class QueryBuilder {
   sort() {
     let sort = this?.query?.sort?.split(",").join(" ") || "-createdAt";
     this.modelQuery = this.modelQuery.find().sort(sort);
+
+    return this;
   }
 
   paginate() {
