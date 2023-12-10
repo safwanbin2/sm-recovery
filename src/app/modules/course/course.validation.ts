@@ -5,6 +5,11 @@ const preRequisiteCoursesValidationSchema = z.object({
   isDeleted: z.boolean().default(false),
 });
 
+const updatePreRequisiteCoursesValidationSchema = z.object({
+  course: z.string().optional(),
+  isDeleted: z.boolean().optional(),
+});
+
 const createCourseValidationSchema = z.object({
   body: z.object({
     title: z.string().min(10),
@@ -25,7 +30,7 @@ const updateCourseValidationSchema = z.object({
     credit: z.number().int().positive().optional(),
     prefix: z.string().optional(),
     preRequisiteCourses: z
-      .array(preRequisiteCoursesValidationSchema)
+      .array(updatePreRequisiteCoursesValidationSchema)
       .optional(),
     isDeleted: z.boolean().optional(),
   }),
