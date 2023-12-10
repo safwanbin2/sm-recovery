@@ -1,12 +1,12 @@
 import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
-import { sendReponse } from "../../utils/sendResponse";
+import { sendResponse } from "../../utils/sendResponse";
 import { CourseService } from "./course.service";
 
 const createCourse = catchAsync(async (req, res, next) => {
   const result = await CourseService.createCourseIntoDB(req.body);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: httpStatus.OK,
     success: true,
     message: "Course created successfully",
@@ -17,7 +17,7 @@ const createCourse = catchAsync(async (req, res, next) => {
 const getAllCourse = catchAsync(async (req, res, next) => {
   const result = await CourseService.getAllCoursesFromDB(req.query);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: httpStatus.OK,
     success: true,
     message: "Courses retrieved successfully",
@@ -29,10 +29,22 @@ const getSingleCourse = catchAsync(async (req, res, next) => {
   const { courseId } = req.params;
   const result = await CourseService.getSingleCourseFromDB(courseId);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: httpStatus.OK,
     success: true,
     message: "Single student retrieved successfully",
+    data: result as object,
+  });
+});
+
+const updateCourse = catchAsync(async (req, res, next) => {
+  const { courseId } = req.params;
+  const result = await CourseService.updateCourseIntoDB(courseId, req.body);
+
+  sendResponse(res, {
+    status: httpStatus.OK,
+    success: true,
+    message: "Course Updated successfully",
     data: result as object,
   });
 });
@@ -41,7 +53,7 @@ const deleteCourse = catchAsync(async (req, res, next) => {
   const { courseId } = req.params;
   const result = await CourseService.deleteCourseFromDB(courseId);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: httpStatus.OK,
     success: true,
     message: "Course Deleted successfully",
@@ -53,5 +65,6 @@ export const CourseController = {
   createCourse,
   getAllCourse,
   getSingleCourse,
+  updateCourse,
   deleteCourse,
 };

@@ -1,6 +1,6 @@
 import { Response } from "express";
 
-export const sendReponse = (
+export const sendResponse = (
   res: Response,
   data: {
     status: number;

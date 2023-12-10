@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import { UserService } from "./user.services";
-import { sendReponse } from "../../utils/sendResponse";
+import { sendResponse } from "../../utils/sendResponse";
 import { catchAsync } from "../../utils/catchAsync";
 import httpStatus from "http-status";
 
@@ -8,7 +8,7 @@ const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
   const { password, student } = req.body;
   const result = await UserService.createStudentIntoDB(password, student);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: 200,
     success: true,
     message: "created successfully",
@@ -20,7 +20,7 @@ const getSingleUser = catchAsync(async (req, res, next) => {
   const { userId } = req.params;
   const result = await UserService.getSingleStudentFromDB(userId);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: 200,
     success: true,
     message: "Retrieved successfully",
@@ -32,7 +32,7 @@ const createFaculty = catchAsync(async (req, res, next) => {
   const { password, faculty } = req.body;
   const result = await UserService.createFacultyIntoDB(password, faculty);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: httpStatus.ACCEPTED,
     success: true,
     message: "User and Faculty created successfully",

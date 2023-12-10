@@ -1,5 +1,5 @@
 import { catchAsync } from "../../utils/catchAsync";
-import { sendReponse } from "../../utils/sendResponse";
+import { sendResponse } from "../../utils/sendResponse";
 import { AcademicSemesterService } from "./academicSemester.service";
 
 const createAcademicSemester = catchAsync(async (req, res, next) => {
@@ -7,7 +7,7 @@ const createAcademicSemester = catchAsync(async (req, res, next) => {
     req.body
   );
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: 500,
     success: true,
     message: "Created semester successfully",

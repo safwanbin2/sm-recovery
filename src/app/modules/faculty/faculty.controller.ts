@@ -1,12 +1,12 @@
 import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
-import { sendReponse } from "../../utils/sendResponse";
+import { sendResponse } from "../../utils/sendResponse";
 import { FacultyService } from "./faculty.service";
 
 const getAllFaculties = catchAsync(async (req, res, next) => {
   const result = await FacultyService.getAllFacultiesFromDB(req.query);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: httpStatus.FOUND,
     success: true,
     message: "Found the faculties",
@@ -18,7 +18,7 @@ const deleteSingleFaculty = catchAsync(async (req, res, next) => {
   const { facultyId } = req.params;
   const result = await FacultyService.deleteSingleFacultyFromDB(facultyId);
 
-  sendReponse(res, {
+  sendResponse(res, {
     status: httpStatus.OK,
     success: true,
     message: "Found the faculties",
