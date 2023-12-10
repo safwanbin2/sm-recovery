@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import QueryBuilder from "../../builders/QueryBuilders";
 import { TCourse } from "./course.interface";
 import { CourseModel } from "./course.model";
@@ -28,41 +29,81 @@ const getSingleCourseFromDB = async (id: string) => {
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
   const { preRequisiteCourses, ...remainingData } = payload;
 
-  const basicUpdate = await CourseModel.findByIdAndUpdate(id, remainingData, {
-    new: true,
-    runValidators: true,
-  });
+  const session = await mongoose.startSession();
 
-  if (preRequisiteCourses && preRequisiteCourses.length) {
-    const deletePreRequisites = preRequisiteCourses
-      .filter((el) => el.course && el.isDeleted)
-      .map((el) => el.course);
+  try {
+    session.startTransaction();
 
-    const deletedResult = await CourseModel.findByIdAndUpdate(id, {
-      $pull: {
-        preRequisiteCourses: {
-          course: {
-            $in: deletePreRequisites,
+    const basicUpdate = await CourseModel.findByIdAndUpdate(id, remainingData, {
+      new: true,
+      runValidators: true,
+      session,
+    });
+
+    if (!basicUpdate) {
+      throw new Error("Could not update course");
+    }
+
+    if (preRequisiteCourses && preRequisiteCourses.length) {
+      const deletePreRequisites = preRequisiteCourses
+        .filter((el) => el.course && el.isDeleted)
+        .map((el) => el.course);
+
+      const deletedResult = await CourseModel.findByIdAndUpdate(
+        id,
+        {
+          $pull: {
+            preRequisiteCourses: {
+              course: {
+                $in: deletePreRequisites,
+              },
+            },
           },
         },
-      },
-    });
+        {
+          new: true,
+          runValidators: true,
+          session,
+        }
+      );
 
-    const newPreRequisites = preRequisiteCourses.filter(
-      (el) => el.course && !el.isDeleted
-    );
+      if (!deletedResult) {
+        throw new Error("Could not update course");
+      }
 
-    const newResult = await CourseModel.findByIdAndUpdate(id, {
-      $addToSet: {
-        preRequisiteCourses: {
-          $each: newPreRequisites,
+      const newPreRequisites = preRequisiteCourses.filter(
+        (el) => el.course && !el.isDeleted
+      );
+
+      const newResult = await CourseModel.findByIdAndUpdate(
+        id,
+        {
+          $addToSet: {
+            preRequisiteCourses: {
+              $each: newPreRequisites,
+            },
+          },
         },
-      },
-    });
-  }
+        {
+          new: true,
+          runValidators: true,
+          session,
+        }
+      );
+      if (!newPreRequisites) {
+        throw new Error("Could not update course");
+      }
+    }
 
-  const result = await CourseModel.findById(id);
-  return result;
+    await session.commitTransaction();
+    await session.endSession();
+    const result = await CourseModel.findById(id);
+    return result;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error("Could not update course");
+  }
 };
 
 const deleteCourseFromDB = async (id: string) => {
