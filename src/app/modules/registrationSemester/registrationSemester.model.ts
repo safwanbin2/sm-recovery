@@ -1,11 +1,12 @@
 import { Schema, model } from "mongoose";
 import { TRegistrationSemester } from "./registrationSemester.interface";
+import { AcademicSemesterModel } from "../academicSemester/academicSemester.model";
 
 const registrationSemesterSchema = new Schema<TRegistrationSemester>(
   {
     academicSemester: {
       type: Schema.Types.ObjectId,
-      unique: true,
+      // unique: true,
       ref: "AcademicSemester",
     },
     status: {
@@ -34,6 +35,23 @@ const registrationSemesterSchema = new Schema<TRegistrationSemester>(
     timestamps: true,
   }
 );
+
+registrationSemesterSchema.pre("save", async function () {
+  const payload = this;
+  const isSemesterExist = await AcademicSemesterModel.findById(
+    payload?.academicSemester
+  );
+  if (!isSemesterExist) {
+    throw new Error("Academic Semester Does not exists");
+  }
+
+  const isAlreadyRegistered = await RegistrationSemesterModel.findOne({
+    academicSemester: this?.academicSemester,
+  });
+  if (isAlreadyRegistered) {
+    throw new Error("Academic Semester is alreadty registerd");
+  }
+});
 
 export const RegistrationSemesterModel = model<TRegistrationSemester>(
   "RegistrationSemester",

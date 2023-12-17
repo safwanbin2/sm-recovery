@@ -22,7 +22,7 @@ app.use("/api/v1/academic-semesters", AcademicSemesterRouter);
 app.use("/api/v1/academic-faculties", AcademicFacultyRouter);
 app.use("/api/v1/academic-departments", AcademicDepartmentRouter);
 app.use("/api/v1/courses", CourseRouter);
-app.use("/api/v1/registration-semester", RegistrationSemesterRouter);
+app.use("/api/v1/semester-registration", RegistrationSemesterRouter);
 
 app.use(globalErrorHandler);
 app.use(routeNotFound);
