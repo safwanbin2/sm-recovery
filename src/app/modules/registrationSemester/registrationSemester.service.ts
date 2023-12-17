@@ -29,8 +29,30 @@ const getSingleRegistrationSemesterFromDB = async (id: string) => {
   return result;
 };
 
+const updateRegistrationSemesterFromDB = async (
+  id: string,
+  payload: Partial<TRegistrationSemester>
+) => {
+  const isExist = await RegistrationSemesterModel.findById(id);
+  if (!isExist) {
+    throw new Error("Regestration for the semester does not exist");
+  }
+
+  if (isExist?.status === "END") {
+    throw new Error(`The semester has already ended`);
+  }
+
+  const result = await RegistrationSemesterModel.findByIdAndUpdate(
+    id,
+    payload,
+    { new: true }
+  );
+  return result;
+};
+
 export const RegistrationSemesterService = {
   createRegistrationSemesterIntoDB,
   getAllRegistrationSemesterFromDB,
   getSingleRegistrationSemesterFromDB,
+  updateRegistrationSemesterFromDB,
 };

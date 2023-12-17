@@ -51,6 +51,13 @@ registrationSemesterSchema.pre("save", async function () {
   if (isAlreadyRegistered) {
     throw new Error("Academic Semester is alreadty registerd");
   }
+
+  const isUpcomingOngoingExist = await RegistrationSemesterModel.find({
+    $or: [{ status: "UPCOMING" }, { status: "ONGOING" }],
+  });
+  if (isUpcomingOngoingExist) {
+    throw new Error(`Already has ${isUpcomingOngoingExist[0]?.status} eixts`);
+  }
 });
 
 export const RegistrationSemesterModel = model<TRegistrationSemester>(
