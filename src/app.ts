@@ -9,6 +9,7 @@ import { AcademicDepartmentRouter } from "./app/modules/academicDepartment/acade
 import { StudentRouter } from "./app/modules/student/student.route";
 import { FacultyRouter } from "./app/modules/faculty/faculty.route";
 import { CourseRouter } from "./app/modules/course/course.route";
+import { RegistrationSemesterRouter } from "./app/modules/registrationSemester/registrationSemester.route";
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,7 @@ app.use("/api/v1/academic-semesters", AcademicSemesterRouter);
 app.use("/api/v1/academic-faculties", AcademicFacultyRouter);
 app.use("/api/v1/academic-departments", AcademicDepartmentRouter);
 app.use("/api/v1/courses", CourseRouter);
+app.use("/api/v1/registration-semester", RegistrationSemesterRouter);
 
 app.use(globalErrorHandler);
 app.use(routeNotFound);
