@@ -22,7 +22,15 @@ const getAllRegistrationSemesterFromDB = async (query: Record<string, any>) => {
   return result;
 };
 
+const getSingleRegistrationSemesterFromDB = async (id: string) => {
+  const result = await RegistrationSemesterModel.findById(id).populate(
+    "academicSemester"
+  );
+  return result;
+};
+
 export const RegistrationSemesterService = {
   createRegistrationSemesterIntoDB,
   getAllRegistrationSemesterFromDB,
+  getSingleRegistrationSemesterFromDB,
 };

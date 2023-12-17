@@ -13,4 +13,10 @@ router.post(
   RegistrationSemesterController.createRegistrationSemester
 );
 
+router.get("/", RegistrationSemesterController.getAllRegistrationSemester);
+router.get(
+  "/:id",
+  RegistrationSemesterController.getSingleRegistrationSemester
+);
+
 export const RegistrationSemesterRouter = router;
