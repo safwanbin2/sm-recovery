@@ -36,11 +36,13 @@ const offeredCourseSchema = new Schema<TOfferedCourse>({
     type: Number,
     required: true,
   },
-  days: {
-    type: String,
-    enum: ["sat", "sun", "mon", "tue", "wed", "thu", "fri"],
-    required: true,
-  },
+  days: [
+    {
+      type: String,
+      enum: ["sat", "sun", "mon", "tue", "wed", "thu", "fri"],
+      required: true,
+    },
+  ],
   startTime: {
     type: String,
     required: true,
