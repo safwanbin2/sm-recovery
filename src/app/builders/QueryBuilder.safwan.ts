@@ -37,3 +37,5 @@ class QueryBuilderSafwan {
     return this;
   }
 }
+
+export default QueryBuilderSafwan;

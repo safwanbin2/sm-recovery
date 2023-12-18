@@ -41,11 +41,19 @@ const updateRegistrationSemesterFromDB = async (
   if (isExist?.status === "END") {
     throw new Error(`The semester has already ended`);
   }
+  if (isExist?.status === "ONGOING" && payload?.status === "UPCOMING") {
+    throw new Error(
+      `The semester has already Started, can not change it back to ${payload?.status}`
+    );
+  }
+  if (isExist?.status === "UPCOMING" && payload?.status === "END") {
+    throw new Error(`Can not end a semester without starting it`);
+  }
 
   const result = await RegistrationSemesterModel.findByIdAndUpdate(
     id,
     payload,
-    { new: true }
+    { new: true, runValidators: true }
   );
   return result;
 };
