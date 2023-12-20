@@ -5,6 +5,7 @@ import { FacultyModel } from "../faculty/faculty.model";
 import { RegistrationSemesterModel } from "../registrationSemester/registrationSemester.model";
 import { TOfferedCourse } from "./offeredCourse.interface";
 import { OfferedCourseModel } from "./offeredCourse.model";
+import { hasTimeConflict } from "./offeredCourse.utils";
 
 const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   // destructuring the _ids from payload
@@ -14,6 +15,9 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
     academicFaculty,
     course,
     faculty,
+    days,
+    startTime,
+    endTime,
   } = payload;
   // validations to check if the _ids exists
   const isRegistrationSemesterExists = await RegistrationSemesterModel.findById(
@@ -46,6 +50,32 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
   const isCourseExists = await CourseModel.findById(course);
   if (!isCourseExists) {
     throw new Error("Course not found");
+  }
+
+  // checking schedule
+
+  const newSchedule = {
+    startTime,
+    endTime,
+  };
+
+  const existingSchedules = await OfferedCourseModel.find({
+    faculty,
+    days: { $in: days },
+  }).select({
+    startTime: 1,
+    endTime: 1,
+  });
+
+  const hasTimeConflictBetweenEach = hasTimeConflict(
+    existingSchedules as any,
+    newSchedule as any
+  );
+  console.log(hasTimeConflictBetweenEach);
+  if (hasTimeConflictBetweenEach) {
+    throw new Error(
+      `Faculty is busy in that schedule for time ${startTime} - ${endTime}`
+    );
   }
 
   // Creating after validation
