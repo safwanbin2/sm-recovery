@@ -18,6 +18,7 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
     days,
     startTime,
     endTime,
+    section,
   } = payload;
   // validations to check if the _ids exists
   const isRegistrationSemesterExists = await RegistrationSemesterModel.findById(
@@ -76,6 +77,14 @@ const createOfferedCourseIntoDB = async (payload: TOfferedCourse) => {
     throw new Error(
       `Faculty is busy in that schedule for time ${startTime} - ${endTime}`
     );
+  }
+
+  const isSectionBooked = await OfferedCourseModel.find({
+    registrationSemester,
+    section,
+  });
+  if (isSectionBooked) {
+    throw new Error("Section is already booked for this semester");
   }
 
   // Creating after validation
