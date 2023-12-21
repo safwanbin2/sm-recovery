@@ -1,7 +1,13 @@
+import config from "../../config";
+import { TUser } from "../user/user.interface";
 import { UserModel } from "../user/user.model";
 import { TAuth } from "./auth.interface";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const logInUserFromDB = async (payload: TAuth) => {
+const logInUserFromDB = async (
+  payload: TAuth
+): Promise<Record<string, any>> => {
   // validations
   const isUserExists = await UserModel.findOne({ id: payload.id });
   if (!isUserExists) {
@@ -16,7 +22,32 @@ const logInUserFromDB = async (payload: TAuth) => {
     throw new Error("User is blocked");
   }
 
-  const result = await payload;
+  // Checking if the password is authentic
+  const isPasswordMatched = await bcrypt.compare(
+    payload?.password,
+    isUserExists?.password as string
+  );
+  if (!isPasswordMatched) {
+    throw new Error(`Password did not match for ${isUserExists?.id}`);
+  }
+
+  // Assigning jwt
+  const jwtPayload = {
+    id: isUserExists?.id,
+    role: isUserExists?.role,
+  };
+  const accressToken = jwt.sign(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    {
+      expiresIn: "10d",
+    }
+  );
+
+  const result = {
+    needsPasswordChange: isUserExists?.needsPasswordChange,
+    accressToken,
+  };
   return result;
 };
 

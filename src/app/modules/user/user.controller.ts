@@ -17,6 +17,7 @@ const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
 });
 
 const getSingleUser = catchAsync(async (req, res, next) => {
+  console.log(req.user);
   const { userId } = req.params;
   const result = await UserService.getSingleStudentFromDB(userId);
 
