@@ -1,8 +1,9 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import config from "../config";
+import { TUserRoles } from "../modules/user/user.interface";
 
-export const auth = () => {
+export const auth = (...userRoles: TUserRoles[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const token = req.headers.authorization;
@@ -17,6 +18,11 @@ export const auth = () => {
             throw new Error("You are not authorized");
           }
           req.user = decoded as JwtPayload;
+          const role = (decoded as JwtPayload).role;
+          if (userRoles && !userRoles.includes(role)) {
+            throw new Error("You are not authorized");
+          }
+
           next();
         }
       );
