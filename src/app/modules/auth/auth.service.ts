@@ -2,8 +2,8 @@ import config from "../../config";
 import { TUser } from "../user/user.interface";
 import { UserModel } from "../user/user.model";
 import { TAuth } from "./auth.interface";
-import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const logInUserFromDB = async (
   payload: TAuth
@@ -77,10 +77,14 @@ const changePasswordFromDB = async (
     throw new Error("Old password was incorrect");
   }
 
+  const hashedPassword = await bcrypt.hash(
+    userData?.password as string,
+    Number(config.bcrypt_salt_rounds)
+  );
   // Finally let the password be changed
   const result = await UserModel.findOneAndUpdate(
     { id: user?.id, role: user?.role },
-    { password: payload?.newPassword },
+    { password: hashedPassword },
     { new: true }
   );
   return result;
