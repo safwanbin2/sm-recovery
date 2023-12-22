@@ -3,7 +3,7 @@ import { TUser } from "../user/user.interface";
 import { UserModel } from "../user/user.model";
 import { TAuth } from "./auth.interface";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const logInUserFromDB = async (
   payload: TAuth
@@ -51,6 +51,42 @@ const logInUserFromDB = async (
   return result;
 };
 
+const changePasswordFromDB = async (
+  user: JwtPayload,
+  payload: { oldPassword: string; newPassword: string }
+) => {
+  console.log(user, payload);
+  // User Validation
+  // Checking if the user exist or not
+  const userData = await UserModel.findOne({ id: user?.id, role: user?.role });
+  if (!userData) {
+    throw new Error("User does not exist on Database");
+  }
+  if (userData?.isDeleted) {
+    throw new Error("User is deleted from Database");
+  }
+  if (userData?.status === "blocked") {
+    throw new Error("User is Blocked");
+  }
+  // Password Validation
+  const isPasswordMatched = bcrypt.compare(
+    payload?.oldPassword,
+    userData?.password as string
+  );
+  if (!isPasswordMatched) {
+    throw new Error("Old password was incorrect");
+  }
+
+  // Finally let the password be changed
+  const result = await UserModel.findOneAndUpdate(
+    { id: user?.id, role: user?.role },
+    { password: payload?.newPassword },
+    { new: true }
+  );
+  return result;
+};
+
 export const AuthService = {
   logInUserFromDB,
+  changePasswordFromDB,
 };
