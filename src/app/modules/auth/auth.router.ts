@@ -20,4 +20,6 @@ router.post(
   AuthController.changePassword
 );
 
+router.post("/refreshToken", AuthController.renewAccessToken);
+
 export const AuthRouter = router;

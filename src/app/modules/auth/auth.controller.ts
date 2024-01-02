@@ -35,7 +35,19 @@ const changePassword = catchAsync(async (req, res, next) => {
   sendResponse(res, {
     success: true,
     status: httpStatus.OK,
-    message: "Password successfully",
+    message: "Password changed successfully",
+    data: result as any,
+  });
+});
+
+const renewAccessToken = catchAsync(async (req, res, next) => {
+  const { refreshToken } = req.cookies;
+  const result = await AuthService.renewAccessToken(refreshToken);
+
+  sendResponse(res, {
+    success: true,
+    status: httpStatus.OK,
+    message: "Renewed access token",
     data: result as any,
   });
 });
@@ -43,4 +55,5 @@ const changePassword = catchAsync(async (req, res, next) => {
 export const AuthController = {
   logInUser,
   changePassword,
+  renewAccessToken,
 };

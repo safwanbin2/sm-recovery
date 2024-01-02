@@ -93,7 +93,23 @@ const changePasswordFromDB = async (
   return result;
 };
 
+const renewAccessToken = async (refreshToken: string) => {
+  const decoded = jwt.verify(refreshToken, config.jwt_refresh_secret as string);
+
+  const jwtPayload = {
+    id: decoded.id,
+    role: decoded.role,
+  };
+  const accessToken = assignJwt(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    "10d"
+  );
+  return accessToken;
+};
+
 export const AuthService = {
   logInUserFromDB,
   changePasswordFromDB,
+  renewAccessToken,
 };
