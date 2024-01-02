@@ -96,7 +96,7 @@ const changePasswordFromDB = async (
 const renewAccessToken = async (refreshToken: string) => {
   const decoded = jwt.verify(refreshToken, config.jwt_refresh_secret as string);
 
-  const jwtPayload = {
+  const jwtPayload: Record<string, any> = {
     id: decoded.id,
     role: decoded.role,
   };
@@ -108,8 +108,35 @@ const renewAccessToken = async (refreshToken: string) => {
   return accessToken;
 };
 
+const forgetPassword = async (userId: string) => {
+  const userData = await UserModel.findOne({ id: userId });
+  if (!userData) {
+    throw new Error("User does not exist on Database");
+  }
+  if (userData?.isDeleted) {
+    throw new Error("User is deleted from Database");
+  }
+  if (userData?.status === "blocked") {
+    throw new Error("User is Blocked");
+  }
+
+  const jwtPayload: Record<string, any> = {
+    id: userData.id,
+    role: userData.role,
+  };
+  const resetToken = assignJwt(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    "10m"
+  );
+
+  const resetUILink = `http://localhost:3000?id=${userData.id}&token=${resetToken}`;
+  return resetUILink;
+};
+
 export const AuthService = {
   logInUserFromDB,
   changePasswordFromDB,
   renewAccessToken,
+  forgetPassword,
 };
