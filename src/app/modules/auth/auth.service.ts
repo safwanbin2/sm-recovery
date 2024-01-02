@@ -4,6 +4,7 @@ import { UserModel } from "../user/user.model";
 import { TAuth } from "./auth.interface";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { assignJwt } from "./auth.utils";
 
 const logInUserFromDB = async (
   payload: TAuth
@@ -36,17 +37,19 @@ const logInUserFromDB = async (
     id: isUserExists?.id,
     role: isUserExists?.role,
   };
-  const accressToken = jwt.sign(
+
+  const accessToken = assignJwt(
     jwtPayload,
     config.jwt_access_secret as string,
-    {
-      expiresIn: "10d",
-    }
+    "10d"
   );
 
   const result = {
-    needsPasswordChange: isUserExists?.needsPasswordChange,
-    accressToken,
+    jwtPayload,
+    data: {
+      needsPasswordChange: isUserExists?.needsPasswordChange,
+      accessToken,
+    },
   };
   return result;
 };

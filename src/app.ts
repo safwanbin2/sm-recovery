@@ -12,10 +12,12 @@ import { CourseRouter } from "./app/modules/course/course.route";
 import { RegistrationSemesterRouter } from "./app/modules/registrationSemester/registrationSemester.route";
 import { OfferedCourseRouter } from "./app/modules/offeredCourse/offeredCourse.route";
 import { AuthRouter } from "./app/modules/auth/auth.router";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 app.use("/api/v1/users", UserRouter);
 app.use("/api/v1/students", StudentRouter);
