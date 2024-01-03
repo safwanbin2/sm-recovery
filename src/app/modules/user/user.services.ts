@@ -8,6 +8,7 @@ import { UserModel } from "./user.model";
 import { generateFacultyId, generateStudentId } from "./user.utils";
 import { TFaculty } from "../faculty/faculty.interface";
 import { FacultyModel } from "../faculty/faculty.model";
+import { JwtPayload } from "jsonwebtoken";
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   let user: Partial<TUser> = {};
@@ -49,8 +50,12 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   }
 };
 
-const getSingleStudentFromDB = async (userId: string) => {
-  const result = await UserModel.findById(userId);
+const getMeFromDB = async (user: JwtPayload) => {
+  const { id, role } = user;
+  const result = await UserModel.findOne({ id, role });
+  if (!result) {
+    throw new Error("User do not exists");
+  }
   return result;
 };
 
@@ -93,6 +98,6 @@ const createFacultyIntoDB = async (password: string, faculty: TFaculty) => {
 
 export const UserService = {
   createStudentIntoDB,
-  getSingleStudentFromDB,
+  getMeFromDB,
   createFacultyIntoDB,
 };

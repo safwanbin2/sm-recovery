@@ -16,10 +16,9 @@ const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
   });
 });
 
-const getSingleUser = catchAsync(async (req, res, next) => {
-  console.log(req.user);
-  const { userId } = req.params;
-  const result = await UserService.getSingleStudentFromDB(userId);
+const getMe = catchAsync(async (req, res, next) => {
+  const token = req.user;
+  const result = await UserService.getMeFromDB(token);
 
   sendResponse(res, {
     status: 200,
@@ -43,6 +42,6 @@ const createFaculty = catchAsync(async (req, res, next) => {
 
 export const UserController = {
   createStudent,
-  getSingleUser,
+  getMe,
   createFaculty,
 };

@@ -8,18 +8,18 @@ export const auth = (...userRoles: TUserRoles[]) => {
     try {
       const token = req.headers.authorization;
       if (!token) {
-        throw new Error("You are not authorized");
+        throw new Error("Provide token");
       }
       const verifiedToken = jwt.verify(
         token,
         config.jwt_access_secret as string,
         function (err, decoded) {
           if (err) {
-            throw new Error("You are not authorized");
+            throw new Error("Token error");
           }
           req.user = decoded as JwtPayload;
           const role = (decoded as JwtPayload).role;
-          if (userRoles && !userRoles.includes(role)) {
+          if (userRoles.length && !userRoles.includes(role)) {
             throw new Error("You are not authorized");
           }
 
