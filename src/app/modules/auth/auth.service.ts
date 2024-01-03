@@ -94,7 +94,10 @@ const changePasswordFromDB = async (
 };
 
 const renewAccessToken = async (refreshToken: string) => {
-  const decoded = jwt.verify(refreshToken, config.jwt_refresh_secret as string);
+  const decoded: any = jwt.verify(
+    refreshToken,
+    config.jwt_refresh_secret as string
+  );
 
   const jwtPayload: Record<string, any> = {
     id: decoded.id,
