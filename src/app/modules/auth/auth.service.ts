@@ -137,9 +137,49 @@ const forgetPassword = async (userId: string) => {
   sendMail(userData.email, resetUILink);
 };
 
+const resetPassword = async (
+  payload: { id: string; newPassword: string },
+  token: string
+) => {
+  const { id, newPassword } = payload;
+  if (!token) {
+    throw new Error("Unauthorized access");
+  }
+  const userData = await UserModel.findOne({ id });
+  if (!userData) {
+    throw new Error("User does not exists");
+  }
+  if (userData.status === "blocked") {
+    throw new Error("User is blocked");
+  }
+  if (userData.isDeleted) {
+    throw new Error("User is deleted");
+  }
+
+  const jwtPayload: any = jwt.verify(token, config.jwt_access_secret as string);
+
+  if (jwtPayload.id !== id) {
+    throw new Error("Unauthorized access");
+  }
+
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds)
+  );
+
+  const result = await UserModel.findOneAndUpdate(
+    { id },
+    { password: hashedPassword },
+    { new: true }
+  );
+
+  return result;
+};
+
 export const AuthService = {
   logInUserFromDB,
   changePasswordFromDB,
   renewAccessToken,
   forgetPassword,
+  resetPassword,
 };
