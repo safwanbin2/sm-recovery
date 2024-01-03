@@ -5,6 +5,7 @@ import { TAuth } from "./auth.interface";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { assignJwt } from "./auth.utils";
+import { sendMail } from "../../utils/sendMail";
 
 const logInUserFromDB = async (
   payload: TAuth
@@ -58,7 +59,6 @@ const changePasswordFromDB = async (
   user: JwtPayload,
   payload: { oldPassword: string; newPassword: string }
 ) => {
-  console.log(user, payload);
   // User Validation
   // Checking if the user exist or not
   const userData = await UserModel.findOne({ id: user?.id, role: user?.role });
@@ -130,8 +130,8 @@ const forgetPassword = async (userId: string) => {
     "10m"
   );
 
-  const resetUILink = `http://localhost:3000?id=${userData.id}&token=${resetToken}`;
-  return resetUILink;
+  const resetUILink = `${config.reset_pass_ui_link}?id=${userData.id}&token=${resetToken}`;
+  sendMail(userData.email, resetUILink);
 };
 
 export const AuthService = {

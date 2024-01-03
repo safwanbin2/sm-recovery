@@ -10,7 +10,7 @@ const router = Router();
 
 router.post(
   "/create-student",
-  auth(USER_ROLE.faculty),
+  // auth(USER_ROLE.faculty),
   validateRequest(StudentValidation.createStudentValidationSchema),
   UserController.createStudent
 );
