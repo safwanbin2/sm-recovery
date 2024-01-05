@@ -11,7 +11,11 @@ import { FacultyModel } from "../faculty/faculty.model";
 import { JwtPayload } from "jsonwebtoken";
 import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 
-const createStudentIntoDB = async (password: string, payload: TStudent) => {
+const createStudentIntoDB = async (
+  imgFile: any,
+  password: string,
+  payload: TStudent
+) => {
   let user: Partial<TUser> = {};
 
   const admissionSemester = await AcademicSemesterModel.findOne({
@@ -28,7 +32,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   try {
     session.startTransaction();
 
-    // sendImageToCloudinary(payload?.profileImage);
+    const { secure_url } = await sendImageToCloudinary(imgFile.path);
 
     const newUser = await UserModel.create([user], { session });
     if (!newUser.length) {
@@ -37,6 +41,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     payload.user = newUser[0]._id;
     payload.id = newUser[0].id;
     payload.role = "student";
+    payload.profileImage = secure_url;
 
     const newStudent = await StudentModel.create([payload], { session });
 

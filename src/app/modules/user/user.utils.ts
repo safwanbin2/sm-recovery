@@ -22,13 +22,12 @@ export const generateStudentId = async (
   let currentId = (0).toString();
 
   const lastId = await findLastId("student");
-  console.log(lastId);
+
   if (
     lastId &&
     lastId.substring(0, 4) === admissionSemester.year &&
     lastId.substring(4, 6) === admissionSemester.code
   ) {
-    console.log(lastId, "last");
     currentId = lastId.substring(6);
   }
 

@@ -15,7 +15,6 @@ router.post(
   upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = JSON.parse(req.body.data);
-    console.log({ body: req.body });
     next();
   },
   validateRequest(StudentValidation.createStudentValidationSchema),

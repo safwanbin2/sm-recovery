@@ -1,20 +1,33 @@
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
+import fs from "fs";
+
+cloudinary.config({
+  cloud_name: "ds1maiqpl",
+  api_key: "738726652524346",
+  api_secret: "bueVzEC4wJ6IIy4dahG7CpZU8RI",
+});
 
 export const sendImageToCloudinary = (imgURL: string) => {
-  cloudinary.config({
-    cloud_name: "ds1maiqpl",
-    api_key: "738726652524346",
-    api_secret: "bueVzEC4wJ6IIy4dahG7CpZU8RI",
-  });
+  return new Promise((resolve, reject): any => {
+    cloudinary.uploader.upload(
+      imgURL,
+      { public_id: "User_Photo" },
+      function (error, result) {
+        if (error) {
+          reject(error);
+        }
+        resolve(result);
 
-  cloudinary.uploader.upload(
-    imgURL,
-    { public_id: "olympic_flag" },
-    function (error, result) {
-      console.log(result);
-    }
-  );
+        fs.unlink(imgURL, (err) => {
+          if (err) {
+            reject(err);
+          }
+          console.log(`File is deleted`);
+        });
+      }
+    );
+  });
 };
 
 const storage = multer.diskStorage({

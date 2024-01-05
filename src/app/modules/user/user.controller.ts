@@ -6,9 +6,14 @@ import httpStatus from "http-status";
 
 const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
   const imgFile = req.file;
+  console.log({ imgFile });
   const { password, student } = req.body;
-  console.log(imgFile);
-  const result = await UserService.createStudentIntoDB(password, student);
+
+  const result = await UserService.createStudentIntoDB(
+    imgFile,
+    password,
+    student
+  );
 
   sendResponse(res, {
     status: 200,
