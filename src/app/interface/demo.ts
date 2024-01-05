@@ -53,3 +53,5 @@ const printTitle: PrintTitle = (animal) => {
 
 const result = printTitle(animal);
 console.log(result);
+
+// dummy commit
