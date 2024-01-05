@@ -9,6 +9,7 @@ import { generateFacultyId, generateStudentId } from "./user.utils";
 import { TFaculty } from "../faculty/faculty.interface";
 import { FacultyModel } from "../faculty/faculty.model";
 import { JwtPayload } from "jsonwebtoken";
+import { sendImageToCloudinary } from "../../utils/sendImageToCloudinary";
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   let user: Partial<TUser> = {};
@@ -26,6 +27,8 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
+
+    // sendImageToCloudinary(payload?.profileImage);
 
     const newUser = await UserModel.create([user], { session });
     if (!newUser.length) {

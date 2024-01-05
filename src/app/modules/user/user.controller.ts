@@ -5,7 +5,9 @@ import { catchAsync } from "../../utils/catchAsync";
 import httpStatus from "http-status";
 
 const createStudent: RequestHandler = catchAsync(async (req, res, next) => {
+  const imgFile = req.file;
   const { password, student } = req.body;
+  console.log(imgFile);
   const result = await UserService.createStudentIntoDB(password, student);
 
   sendResponse(res, {

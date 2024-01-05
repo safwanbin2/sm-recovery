@@ -28,7 +28,6 @@ const createStudentValidationSchema = z.object({
       permanentAddress: z.string(),
       guardian: guardianValidationSchema,
       localGuardian: guardianValidationSchema,
-      profileImage: z.string(),
       academicDepartment: z.string(),
       admissionSemester: z.string(), // Assuming ObjectId is represented as a UUID
       isDeleted: z.boolean().default(false),
